@@ -1,0 +1,35 @@
+backend:
+  name: git-gateway
+  branch: main
+
+media_folder: "images/uploads"
+public_folder: "/images/uploads"
+
+collections:
+  - name: "site_data"
+    label: "网站内容"
+    files:
+      - name: "content"
+        label: "全部数据"
+        file: "content.json"
+        fields:
+          - label: "通知公告"
+            name: "notices"
+            widget: "list"
+            fields:
+              - { label: "日期", name: "date", widget: "date" }
+              - { label: "标题", name: "title", widget: "string" }
+              - { label: "正文", name: "body", widget: "markdown" }
+          - label: "视频展示"
+            name: "videos"
+            widget: "list"
+            fields:
+              - { label: "视频标题", name: "title", widget: "string" }
+              - { label: "嵌入地址", name: "src", widget: "string" }
+          - label: "项目成果"
+            name: "achievements"
+            widget: "list"
+            fields:
+              - { label: "标题", name: "title", widget: "string" }
+              - { label: "描述", name: "desc", widget: "text" }
+              - { label: "图片链接", name: "image", widget: "string" }

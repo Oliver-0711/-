@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>项目名称 | 官方宣传站</title>
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family: system-ui, -apple-system, sans-serif; background:#f5f7fb; color:#1e293b; line-height:1.6; padding-top:70px; }
+    .container { max-width:1200px; margin:0 auto; padding:0 20px; }
+    nav { position:fixed; top:0; left:0; right:0; background:rgba(255,255,255,0.9); backdrop-filter:blur(10px); box-shadow:0 1px 8px rgba(0,0,0,0.05); z-index:1000; }
+    .nav-inner { max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; align-items:center; height:70px; padding:0 20px; }
+    .logo { font-size:1.5rem; font-weight:700; }
+    .nav-links { display:flex; gap:1.5rem; list-style:none; }
+    .nav-links a { color:#475569; font-weight:500; padding:0.5rem 0; border-bottom:2px solid transparent; text-decoration:none; }
+    .nav-links a:hover, .nav-links a.active { color:#2563eb; border-bottom-color:#2563eb; }
+    .page { display:none; animation: fade 0.3s; }
+    .page.active { display:block; }
+    @keyframes fade { from{opacity:0; transform:translateY(10px);} to{opacity:1; transform:translateY(0);} }
+    .hero { text-align:center; padding:80px 0 60px; background:linear-gradient(135deg,#eff6ff,#dbeafe); margin:-60px -20px 0 -20px; border-radius:0 0 40px 40px; }
+    .hero h1 { font-size:2.8rem; color:#0f172a; }
+    .hero p { font-size:1.2rem; color:#334155; max-width:600px; margin:1rem auto 2rem; }
+    .btn { display:inline-block; background:#2563eb; color:white; padding:12px 32px; border-radius:40px; font-weight:600; text-decoration:none; }
+    .card-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:24px; margin-top:30px; }
+    .card { background:white; border-radius:20px; padding:24px; box-shadow:0 4px 16px rgba(0,0,0,0.04); }
+    .notice-item { background:white; border-left:5px solid #2563eb; padding:20px 24px; border-radius:12px; margin-bottom:16px; cursor:pointer; transition:0.2s; }
+    .notice-item:hover { transform:translateY(-2px); box-shadow:0 8px 20px rgba(0,0,0,0.06); }
+    .notice-date { font-size:0.85rem; color:#64748b; }
+    .notice-title { font-size:1.2rem; font-weight:700; margin:6px 0; }
+    .video-card { background:white; border-radius:20px; overflow:hidden; box-shadow:0 4px 16px rgba(0,0,0,0.04); }
+    .video-wrapper { position:relative; padding-bottom:56.25%; height:0; }
+    .video-wrapper iframe { position:absolute; top:0; left:0; width:100%; height:100%; border:0; }
+    .video-info { padding:16px 20px; }
+    .achievement-card img { width:100%; height:180px; object-fit:cover; border-radius:16px; margin-bottom:12px; }
+    .back-link { display:inline-block; margin-bottom:20px; color:#2563eb; font-weight:500; cursor:pointer; }
+    .detail-content { background:white; padding:30px; border-radius:20px; box-shadow:0 4px 16px rgba(0,0,0,0.04); }
+    .detail-content img { max-width:100%; border-radius:12px; margin:15px 0; }
+    footer { text-align:center; padding:30px 0; color:#94a3b8; border-top:1px solid #e2e8f0; margin-top:40px; }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+</head>
+<body>
+  <nav>
+    <div class="nav-inner">
+      <div class="logo">🚀 项目名称</div>
+      <ul class="nav-links">
+        <li><a href="#home" class="nav-link active" data-page="home">首页</a></li>
+        <li><a href="#notices" class="nav-link" data-page="notices">通知公告</a></li>
+        <li><a href="#videos" class="nav-link" data-page="videos">视频展示</a></li>
+        <li><a href="#achievements" class="nav-link" data-page="achievements">项目成果</a></li>
+        <li><a href="#about" class="nav-link" data-page="about">关于我们</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <div class="container" id="app"></div>
+  <footer>© 2026 项目名称</footer>
+
+  <script>
+    // 加载数据
+    fetch('/content.json')
+      .then(res => res.json())
+      .then(data => {
+        window.siteData = data;
+        renderPage();
+        window.addEventListener('hashchange', renderPage);
+      });
+
+    function renderPage() {
+      const hash = window.location.hash.slice(1) || 'home';
+      const [base, query] = hash.split('?');
+      const params = new URLSearchParams(query || '');
+      const app = document.getElementById('app');
+
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.classList.remove('active');
+        if (link.dataset.page === base) link.classList.add('active');
+      });
+
+      switch(base) {
+        case 'home': renderHome(app); break;
+        case 'notices':
+          params.has('id') ? renderNoticeDetail(app, parseInt(params.get('id'))) : renderNoticesList(app);
+          break;
+        case 'videos': renderVideos(app); break;
+        case 'achievements': renderAchievements(app); break;
+        case 'about': renderAbout(app); break;
+        default: renderHome(app);
+      }
+      window.scrollTo(0,0);
+    }
+
+    function renderHome(container) {
+      container.innerHTML = `
+        <div class="page active">
+          <div class="hero">
+            <h1>用技术点亮未来</h1>
+            <p>这里是项目的一句话介绍，突出核心价值。</p>
+            <a href="#videos" class="btn" onclick="window.location.hash='videos'">📺 观看演示视频</a>
+          </div>
+          <section>
+            <h2 style="text-align:center; margin-bottom:20px;">为什么选择我们</h2>
+            <div class="card-grid">
+              <div class="card"><h3>🌟 创新性</h3><p>突破传统，采用前沿技术。</p></div>
+              <div class="card"><h3>⚡ 高效率</h3><p>流程优化，显著提升速度。</p></div>
+              <div class="card"><h3>🛡️ 稳定可靠</h3><p>经过大量测试，运行稳健。</p></div>
+            </div>
+          </section>
+        </div>`;
+    }
+
+    function renderNoticesList(container) {
+      const notices = window.siteData?.notices || [];
+      container.innerHTML = `
+        <div class="page active">
+          <h2 style="text-align:center; margin:40px 0 30px;">📢 通知公告</h2>
+          ${notices.map((n, i) => `
+            <div class="notice-item" onclick="window.location.hash='notices?id=${i}'">
+              <div class="notice-date">${n.date}</div>
+              <div class="notice-title">${n.title}</div>
+              <p>${n.body ? marked.parse(n.body).replace(/<[^>]*>/g,'').substring(0,80)+'……' : ''}</p>
+            </div>
+          `).join('')}
+        </div>`;
+    }
+
+    function renderNoticeDetail(container, id) {
+      const notices = window.siteData?.notices || [];
+      const n = notices[id];
+      if (!n) return renderNoticesList(container);
+      container.innerHTML = `
+        <div class="page active">
+          <div style="max-width:800px; margin:40px auto;">
+            <span class="back-link" onclick="window.location.hash='notices'">← 返回公告列表</span>
+            <div class="detail-content">
+              <div class="notice-date">${n.date}</div>
+              <h1 style="margin:10px 0 20px;">${n.title}</h1>
+              <div>${marked.parse(n.body || '')}</div>
+            </div>
+          </div>
+        </div>`;
+    }
+
+    function renderVideos(container) {
+      const videos = window.siteData?.videos || [];
+      container.innerHTML = `
+        <div class="page active">
+          <h2 style="text-align:center; margin:40px 0 30px;">🎥 项目视频</h2>
+          <div class="card-grid">
+            ${videos.map(v => `
+              <div class="video-card">
+                <div class="video-wrapper">
+                  <iframe src="${v.src}" allowfullscreen></iframe>
+                </div>
+                <div class="video-info"><h3>${v.title}</h3></div>
+              </div>
+            `).join('')}
+          </div>
+        </div>`;
+    }
+
+    function renderAchievements(container) {
+      const achievements = window.siteData?.achievements || [];
+      container.innerHTML = `
+        <div class="page active">
+          <h2 style="text-align:center; margin:40px 0 30px;">🏆 项目成果</h2>
+          <div class="card-grid">
+            ${achievements.map(a => `
+              <div class="card achievement-card">
+                <img src="${a.image}" alt="${a.title}">
+                <h3>${a.title}</h3>
+                <p>${a.desc}</p>
+              </div>
+            `).join('')}
+          </div>
+        </div>`;
+    }
+
+    function renderAbout(container) {
+      container.innerHTML = `
+        <div class="page active" style="max-width:700px; margin:40px auto; text-align:center;">
+          <h2>👥 关于我们</h2>
+          <p>我们是一支充满激情的团队。</p>
+          <p>📧 邮箱：team@example.com</p>
+        </div>`;
+    }
+  </script>
+</body>
+</html>

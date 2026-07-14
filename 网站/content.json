@@ -1,0 +1,15 @@
+{
+  "notices": [
+    {
+      "date": "2026-07-14",
+      "title": "示例通知：项目启动",
+      "body": "## 欢迎！\n\n这是我们第一个富文本通知，支持**加粗**、图片和视频。\n\n![示例图](https://placehold.co/600x300/2563eb/white?text=项目海报)\n\n<iframe src='//player.bilibili.com/player.html?bvid=BV1xx411c7mD' style='width:100%; aspect-ratio:16/9; border:0;' allowfullscreen></iframe>"
+    }
+  ],
+  "videos": [
+    { "title": "项目整体介绍", "src": "//player.bilibili.com/player.html?bvid=BV1xx411c7mD&page=1" }
+  ],
+  "achievements": [
+    { "title": "专利申请", "desc": "已申请发明专利2项", "image": "https://placehold.co/600x400/1e293b/white?text=专利" }
+  ]
+}
