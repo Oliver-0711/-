@@ -10,6 +10,10 @@
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   <script>
     if (window.netlifyIdentity) {
+      // 处理密码重置、注册确认等所有身份验证回调，强制跳转到 /admin/
+      window.netlifyIdentity.on("open", () => {
+        document.location.href = "/admin/";
+      });
       window.netlifyIdentity.on("init", user => {
         if (!user) {
           window.netlifyIdentity.on("login", () => {
